@@ -97,4 +97,12 @@ public class PropertiesUtils {
         }
         return value;
     }
+
+    public static String getModelName(Properties properties) {
+        String modelName = properties.getProperty("generator.modelName");
+        if (StringUtils.isBlank(modelName)) {
+            modelName ="";
+        }
+        return modelName;
+    }
 }

@@ -1,0 +1,27 @@
+package ${jobConstantPackage};
+
+${classTitle}
+public class ${upClassName}Constant {
+
+    public static final String MODEL_NAME = "${modelName}";
+
+    public static class ConfigKeyWords {
+
+    #foreach($keyWord in $keyWords)
+        ${keyWord}
+    #end
+    }
+
+    public static class SinkKeyWords {
+
+        public final static String CDM_SINK_TOPIC_CONFIG = "cdmSink";
+    }
+
+    public static class SourceTableName {
+
+    #foreach($tableName in $tableNames)
+        ${tableName}
+    #end
+    }
+
+}

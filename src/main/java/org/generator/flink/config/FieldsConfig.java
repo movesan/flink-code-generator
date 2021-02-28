@@ -1,7 +1,9 @@
 package org.generator.flink.config;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @description:
@@ -24,5 +26,14 @@ public class FieldsConfig {
         map.put("name", "名称");
         map.put("phone", "电话");
         return map;
+    }
+
+    public static Set<String> getFields() {
+        Set<String> set = new HashSet<>();
+        set.add("name");
+        set.add("phone");
+        set.add("address");
+        set.add("age");
+        return set;
     }
 }

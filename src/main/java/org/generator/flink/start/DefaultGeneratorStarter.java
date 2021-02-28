@@ -154,6 +154,8 @@ public class DefaultGeneratorStarter implements GeneratorStarter {
     protected GeneratorContext initBaseContext(String tableName,
                                                Map<String, String> allTypeAliasesMap) {
 //        Map<String, String> propMap = connector.getPrimaryKey(tableName);
+        List<String> tableNames = PropertiesUtils.getTableList(properties);
+        String modelName = PropertiesUtils.getModelName(properties);
         String authorName = PropertiesUtils.getAuthorName(properties);
         String upClassName = GeneratorStringUtils.firstUpperAndNoPrefix(tableName, properties);
         String lowClassName = GeneratorStringUtils.formatAndNoPrefix(tableName, properties);
@@ -173,12 +175,14 @@ public class DefaultGeneratorStarter implements GeneratorStarter {
                 packageName,
                 primaryKeyType,
                 primaryKey,
+                modelName,
                 properties);
 //        generatorContext.addAttribute("connector", connector);
         generatorContext.addAttribute("properties", properties);
         generatorContext.addAttribute("columnPrimaryKey", columnPrimaryKey);
         generatorContext.addAttribute("normalPrimaryKey", normalPrimaryKey);
         generatorContext.addAttribute("typeAliases", allTypeAliasesMap);
+        generatorContext.addAttribute("tableNames", tableNames);
 //        generatorContext.addAttribute("mappers", allMappersMap);
 //        generatorContext.addAttribute("tableRemark", tableRemark);
         return generatorContext;

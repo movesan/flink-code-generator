@@ -1,0 +1,21 @@
+package ${mapPackage};
+
+import com.jd.wl.rtdw.common.map.JdqCurParamReMap;
+import ${constantPackage}.${upClassName}Constant;
+
+import java.util.List;
+
+${classTitle}
+public class ${upClassName}ParamMap extends JdqCurParamReMap {
+
+    @Override
+    protected List<String> getParamList() {
+        return ${upClassName}Constant.PARAM_LIST;
+    }
+
+    @Override
+    protected List<String> getBasicList() {
+        return ${upClassName}Constant.BASIC_LIST;
+    }
+
+}

@@ -57,6 +57,11 @@ public class GeneratorContext implements Serializable {
     private String primaryKey;
 
     /**
+     * 模型名称
+     */
+    private String modelName;
+
+    /**
      * 上下文参数
      */
     private Map<String, Object> attributes = new HashMap<>();
@@ -68,6 +73,7 @@ public class GeneratorContext implements Serializable {
                             String basePackageName,
                             String primaryKeyType,
                             String primaryKey,
+                            String modelName,
                             Properties properties) {
         this.authorName = authorName;
         this.tableName = tableName;
@@ -76,6 +82,7 @@ public class GeneratorContext implements Serializable {
         this.basePackageName = basePackageName;
         this.primaryKeyType = primaryKeyType;
         this.primaryKey = primaryKey;
+        this.modelName = modelName;
         this.properties = properties;
     }
 
@@ -131,5 +138,9 @@ public class GeneratorContext implements Serializable {
 
     public Map<String, String> getPackageNamesMap() {
         return packageNamesMap;
+    }
+
+    public String getModelName() {
+        return modelName;
     }
 }

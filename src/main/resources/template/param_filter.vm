@@ -1,0 +1,30 @@
+package ${paramFilterPackage};
+
+import com.jd.bdp.jdw.avro.JdwData;
+import org.apache.flink.api.common.functions.FilterFunction;
+import com.jd.wl.rtdw.common.util.CharSequenceMapUtils;
+import org.apache.commons.collections.MapUtils;
+import ${constantPackage}.${upClassName}Constant;
+import java.util.Map;
+
+${classTitle}
+public class ${upClassName}ParamFilter implements FilterFunction<JdwData> {
+
+    @Override
+    public boolean filter(JdwData value) throws Exception {
+        if (value == null) {
+            return false;
+        }
+        Map<String, String> allJdwDataParam = CharSequenceMapUtils.getAllJdwDataParam(value);
+        if (MapUtils.isEmpty(allJdwDataParam)) {
+            return false;
+        }
+        // 基础字段不全，直接过滤
+        for (String s : ${upClassName}Constant.BASIC_LIST) {
+            if (!allJdwDataParam.containsKey(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}

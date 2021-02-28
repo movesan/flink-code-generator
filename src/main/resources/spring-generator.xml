@@ -17,6 +17,20 @@
         </constructor-arg>
     </bean>
 
+    <bean id="paramFilterPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
+        <constructor-arg name="type" value="SOURCE"/>
+        <constructor-arg name="packageConfigTypeSet">
+            <set>
+                <bean class="org.generator.flink.config.PackageConfigType">
+                    <property name="aliasType" value="paramFilterPackage"/>
+                    <property name="targetDir" value="/source/filter"/>
+                    <property name="fileNameSuffix" value="ParamFilter.java"/>
+                    <property name="template" value="param_filter.vm"/>
+                </bean>
+            </set>
+        </constructor-arg>
+    </bean>
+
     <bean id="filterPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
         <constructor-arg name="type" value="SOURCE"/>
         <constructor-arg name="packageConfigTypeSet">
@@ -26,6 +40,20 @@
                     <property name="targetDir" value="/source/filter"/>
                     <property name="fileNameSuffix" value="Filter.java"/>
                     <property name="template" value="filter.vm"/>
+                </bean>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <bean id="paramMapPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
+        <constructor-arg name="type" value="SOURCE"/>
+        <constructor-arg name="packageConfigTypeSet">
+            <set>
+                <bean class="org.generator.flink.config.PackageConfigType">
+                    <property name="aliasType" value="paramMapPackage"/>
+                    <property name="targetDir" value="/source/map"/>
+                    <property name="fileNameSuffix" value="ParamMap.java"/>
+                    <property name="template" value="param_map.vm"/>
                 </bean>
             </set>
         </constructor-arg>
@@ -93,7 +121,7 @@
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="configPackage"/>
-                    <property name="targetDir" value="/common"/>
+                    <property name="targetDir" value="/config"/>
                     <property name="fileNameSuffix" value="Config.java"/>
                     <property name="template" value="config.vm"/>
                 </bean>
@@ -115,14 +143,34 @@
         </constructor-arg>
     </bean>
 
+    <bean id="jobConstantPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
+        <constructor-arg name="type" value="SOURCE"/>
+        <constructor-arg name="packageConfigTypeSet">
+            <set>
+                <bean class="org.generator.flink.config.PackageConfigType">
+                    <property name="aliasType" value="jobConstantPackage"/>
+                    <property name="targetDir" value="/common"/>
+                    <property name="fileNameSuffix" value="Constant.java"/>
+                    <property name="template" value="job_constant.vm"/>
+                </bean>
+            </set>
+        </constructor-arg>
+    </bean>
+
     <bean id="constantGenerator" class="org.generator.flink.generator.impl.ConstantGeneratorImpl">
         <property name="packageConfigTypes" ref="constantPackageConfigTypes"/>
     </bean>
     <bean id="filterGenerator" class="org.generator.flink.generator.impl.FilterGeneratorImpl">
         <property name="packageConfigTypes" ref="filterPackageConfigTypes"/>
     </bean>
+    <bean id="paramFilterGenerator" class="org.generator.flink.generator.impl.FilterGeneratorImpl">
+        <property name="packageConfigTypes" ref="paramFilterPackageConfigTypes"/>
+    </bean>
     <bean id="mapGenerator" class="org.generator.flink.generator.impl.MapGeneratorImpl">
         <property name="packageConfigTypes" ref="mapPackageConfigTypes"/>
+    </bean>
+    <bean id="paramMapGenerator" class="org.generator.flink.generator.impl.MapGeneratorImpl">
+        <property name="packageConfigTypes" ref="paramMapPackageConfigTypes"/>
     </bean>
     <bean id="richFlatMapGenerator" class="org.generator.flink.generator.impl.RichFlatMapGeneratorImpl">
         <property name="packageConfigTypes" ref="richFlatMapPackageConfigTypes"/>
@@ -139,6 +187,9 @@
     <bean id="jobGenerator" class="org.generator.flink.generator.impl.JobGeneratorImpl">
         <property name="packageConfigTypes" ref="jobPackageConfigTypes"/>
     </bean>
+    <bean id="jobConstantGenerator" class="org.generator.flink.generator.impl.JobConstantGeneratorImpl">
+        <property name="packageConfigTypes" ref="jobConstantPackageConfigTypes"/>
+    </bean>
 
     <bean id="generatorFactory" class="org.generator.flink.generator.base.GeneratorFactoryImpl">
         <!-- 每个数据源生成一份 -->
@@ -146,7 +197,9 @@
             <set>
                 <bean parent="constantGenerator"/>
                 <bean parent="filterGenerator"/>
+                <bean parent="paramFilterGenerator"/>
                 <bean parent="mapGenerator"/>
+                <bean parent="paramMapGenerator"/>
                 <bean parent="richFlatMapGenerator"/>
                 <bean parent="selectorGenerator"/>
             </set>
@@ -155,6 +208,7 @@
         <property name="jobGeneratorSet">
             <set>
                 <bean parent="jobGenerator"/>
+                <bean parent="jobConstantGenerator"/>
                 <bean parent="configGenerator"/>
                 <bean parent="sinkSelectorGenerator"/>
             </set>

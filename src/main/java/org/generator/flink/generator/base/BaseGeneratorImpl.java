@@ -85,6 +85,7 @@ public class BaseGeneratorImpl implements Generator {
      *
      * @param context
      */
+    @Override
     public void defaultGenerator(GeneratorContext context, Map<String, String> allPackageNameMap) {
         velocityContext = new VelocityContext();
         Properties properties = initDefaultProperties();
@@ -98,6 +99,7 @@ public class BaseGeneratorImpl implements Generator {
      *
      * @param context
      */
+    @Override
     public void pluginGenerator(GeneratorContext context, Map<String, String> allPackageNameMap) {
         velocityContext = new VelocityContext();
         Properties properties = initPluginProperties();
@@ -195,6 +197,7 @@ public class BaseGeneratorImpl implements Generator {
      * @return
      */
     public void initVelocityContext(VelocityContext velocityContext, GeneratorContext generatorContext) {
+        velocityContext.put("tableNames", generatorContext.getAttribute("tableNames"));
         velocityContext.put("tableName", generatorContext.getTableName());
         velocityContext.put("upClassName", generatorContext.getUpClassName());
         velocityContext.put("lowClassName", generatorContext.getLowClassName());
@@ -290,19 +293,74 @@ public class BaseGeneratorImpl implements Generator {
         }
     }
 
+    protected List<String> generateKeyWords(List<String> tableNames, Properties properties) {
+        List<String> fields = Lists.newArrayList();
+        for (String tableName : tableNames) {
+            StringBuilder sb = new StringBuilder();
+            String upperName = tableName.toUpperCase();
+            String lowName = GeneratorStringUtils.formatAndNoPrefix(tableName, properties);
+            sb.append("public static final String ")
+                    .append(upperName).append("_SOURCE").append(" = ")
+                    .append("\"")
+                    .append(lowName)
+                    .append("\"")
+                    .append(";");
+            fields.add(sb.toString());
+        }
+        return fields;
+    }
+
+    protected List<String> generateTableNames(List<String> tableNames) {
+        List<String> fields = Lists.newArrayList();
+        for (String tableName : tableNames) {
+            StringBuilder sb = new StringBuilder();
+            String upperName = tableName.toUpperCase();
+            sb.append("public static final String ")
+                    .append(upperName).append(" = ")
+                    .append("\"")
+                    .append(tableName)
+                    .append("\"")
+                    .append(";");
+            fields.add(sb.toString());
+        }
+        return fields;
+    }
+
     protected List<String> generateSourceFields(Set<String> keySet) {
         List<String> fields = Lists.newArrayList();
         for (String key : keySet) {
             StringBuilder sb = new StringBuilder();
             String upperField = key.toUpperCase();
             sb.append("public static final String SOURCE_FIELD_")
-                    .append(upperField).append(" ")
-                    .append(key).append(";")
-                    .append(LINE);
+                    .append(upperField).append(" = ")
+                    .append("\"")
+                    .append(key)
+                    .append("\"")
+                    .append(";");
+//                    .append(LINE);
             fields.add(sb.toString());
         }
         return fields;
     }
+
+    protected List<String> generateSourceFieldsParam(Set<String> keySet) {
+        List<String> fields = Lists.newArrayList();
+        int i = keySet.size();
+        for (String key : keySet) {
+            i--;
+            StringBuilder sb = new StringBuilder();
+            String upperField = key.toUpperCase();
+            sb.append("SOURCE_FIELD_")
+                    .append(upperField);
+            if (i > 0) {
+                sb.append(",");
+            }
+            fields.add(sb.toString());
+        }
+        return fields;
+    }
+
+
 
     protected List<String> generateFields(Map<String, String> map,
                                           Map<String, String> columnRemarkMap,
