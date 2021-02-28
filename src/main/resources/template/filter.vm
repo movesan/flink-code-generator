@@ -1,0 +1,13 @@
+package ${filterPackage};
+
+import com.jd.bdp.jdw.avro.JdwData;
+import org.apache.flink.api.common.functions.FilterFunction;
+
+${classTitle}
+public class ${upClassName}Filter implements FilterFunction<JdwData> {
+
+    @Override
+    public boolean filter(JdwData value) throws Exception {
+        return true;
+    }
+}

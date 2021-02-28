@@ -1,0 +1,7 @@
+package ${constantPackage};
+
+${classTitle}
+public class ${upClassName}Constant {
+
+
+}

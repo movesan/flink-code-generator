@@ -1,0 +1,15 @@
+package ${mapPackage};
+
+import com.jd.bdp.jdw.avro.JdwData;
+import org.apache.flink.api.common.functions.MapFunction;
+
+${classTitle}
+public class ${upClassName}Map implements MapFunction<JdwData, JdwData> {
+
+    @Override
+    public JdwData map(JdwData jdwData) throws Exception {
+
+        return jdwData;
+    }
+
+}

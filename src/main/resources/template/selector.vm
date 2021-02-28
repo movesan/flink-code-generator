@@ -1,0 +1,15 @@
+package ${selectorPackage};
+
+import com.jd.bdp.jdw.avro.JdwData;
+import org.apache.flink.api.java.functions.KeySelector;
+
+${classTitle}
+public class ${upClassName}Selector implements KeySelector<JdwData, String> {
+
+    @Override
+    public String getKey(JdwData value) throws Exception {
+
+        return null;
+    }
+
+}
