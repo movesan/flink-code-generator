@@ -1,9 +1,0 @@
-package ${configPackage};
-
-import com.jd.wl.rtdw.common.config.JobConfig;
-
-${classTitle}
-public class ${upClassName}Config extends JobConfig implements Serializable {
-
-
-}

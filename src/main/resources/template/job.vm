@@ -1,10 +1,68 @@
 package ${jobPackage};
 
+import com.jd.bdp.jdw.avro.JdwData;
+import com.jd.wl.rtdw.common.map.JdqParamCaseReMap;
+import com.jd.wl.rtdw.common.mq.AnotherJdwDataDeserSchema;
+import com.jd.wl.rtdw.common.mq.JDQKafkaFactory;
+import org.generator.flink.common.JobConstant;
+import org.generator.flink.config.JobConfig;
+#foreach($sourceConstant in $sourceConstants)
+import org.generator.flink.source.filter.${sourceConstant.upperCamelCase}ParamFilter;
+import org.generator.flink.source.map.${sourceConstant.upperCamelCase}ParamMap;
+#end
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.streaming.api.CheckpointingMode;
+import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.CheckpointConfig;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.util.OutputTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+
+import static com.jd.wl.rtdw.common.Constants.BDP_LOGGER;
+
 ${classTitle}
-public class ${upClassName}Job {
+public class ${upClassName} {
+
+    private static final Logger logger = LoggerFactory.getLogger(BDP_LOGGER);
 
     public static void main(String[] args) throws Exception {
+        ParameterTool parameterA = ParameterTool.fromArgs(args);
+        InputStream file = Job.class.getResourceAsStream("/" + JobConfig.JOB_CONFIG);
+        ParameterTool parameterFile = ParameterTool.fromPropertiesFile(file);
 
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        ParameterTool parameterTool = parameterA.mergeWith(parameterFile);
+        env.getConfig().setGlobalJobParameters(parameterTool);
+
+        logger.info("start with param:{}", parameterTool.toMap().toString());
+        JobConfig jobConfig = JobConfig.fromParameters(parameterTool);
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        env.setMaxParallelism(500);
+        env.enableCheckpointing(60000, CheckpointingMode.EXACTLY_ONCE);
+
+        CheckpointConfig config = env.getCheckpointConfig();
+        config.enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
+        config.setMinPauseBetweenCheckpoints(60000);
+        config.setCheckpointTimeout(60 * 1000 * 5);
+        config.setMaxConcurrentCheckpoints(1);
+
+    #foreach($sourceConstant in $sourceConstants)
+    //
+        SingleOutputStreamOperator<JdwData> ${sourceConstant.lowCamelCase}SourceStream = JDQKafkaFactory
+                .addSource(env, JobConstant.ConfigKeyWords.${sourceConstant.upperSnakeCase}_SOURCE, new AnotherJdwDataDeserSchema(), jobConfig, jobConfig.get${sourceConstant.upperCamelCase}Para())
+                .map(new JdqParamCaseReMap(JdqParamCaseReMap.ParamCase.LOWER_CASE)).name("${sourceConstant.upperCamelCase}ParamCaseMap").uid("${sourceConstant.upperCamelCase}ParamCaseMap").setParallelism(jobConfig.get${sourceConstant.upperCamelCase}Para())
+                .filter(new ${sourceConstant.upperCamelCase}ParamFilter()).name("${sourceConstant.upperCamelCase}ParamFilter").uid("${sourceConstant.upperCamelCase}ParamFilter").setParallelism(jobConfig.get${sourceConstant.upperCamelCase}Para())
+                .map(new ${sourceConstant.upperCamelCase}ParamMap()).name("${sourceConstant.upperCamelCase}ParamMap").uid("${sourceConstant.upperCamelCase}ParamMap").setParallelism(jobConfig.get${sourceConstant.upperCamelCase}Para());
+    #end
+
+        JDQKafkaFactory.addSink(unionStream, JobConstant.SinkKeyWords.CDM_SINK_TOPIC_CONFIG, JobConstant.SinkKeyWords.CDM_SINK_TOPIC_CONFIG, jobConfig.getKafkaSinkPara(), new KafkaSinJdwDataSchemaWrapper());
+        logger.trace("plan visualizer == \n{}", env.getExecutionPlan());
+        env.execute();
     }
 
 }

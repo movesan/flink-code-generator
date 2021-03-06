@@ -5,9 +5,8 @@ import org.generator.flink.generator.base.BaseGeneratorImpl;
 import org.generator.flink.generator.context.GeneratorContext;
 import org.generator.flink.utils.GeneratorStringUtils;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -17,25 +16,20 @@ import java.util.Properties;
  * @date 2021/2/25 16:25
  * @version 1.0
  */
-public class ConfigGeneratorImpl extends BaseGeneratorImpl {
+public class PropertiesGeneratorImpl extends BaseGeneratorImpl {
 
     @Override
     public void initVelocityContext(VelocityContext velocityContext, GeneratorContext generatorContext) {
         super.initVelocityContext(velocityContext, generatorContext);
-
         List<String> tableNames = (List<String>) generatorContext.getAttribute("tableNames");
-        velocityContext.put("sourceFinalParas", generateSourceParas(tableNames, generatorContext.getProperties()));
-        velocityContext.put("sourceParaMap", transToMap(tableNames, generatorContext.getProperties()));
+        velocityContext.put("sources", trans(tableNames, generatorContext.getProperties()));
     }
 
-
-    private Map<String, String> transToMap(List<String> tableNames, Properties properties) {
-        Map<String, String> map = new HashMap<>();
+    private List<String> trans(List<String> tableNames, Properties properties) {
+        List<String> list = new ArrayList<>();
         for (String tableName : tableNames) {
-            String key = GeneratorStringUtils.formatAndNoPrefix(tableName, properties);
-            String value = tableName.toUpperCase();
-            map.put(key + "Para", value);
+            list.add(GeneratorStringUtils.formatAndNoPrefix(tableName, properties));
         }
-        return map;
+        return list;
     }
 }

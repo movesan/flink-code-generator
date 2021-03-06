@@ -18,6 +18,10 @@ public class GeneratorFactoryImpl {
      * 生成器集合（整个项目生成一份）
      */
     private Set<Generator> jobGeneratorSet;
+    /**
+     * 配置文件生成器集合（整个项目生成一份）
+     */
+    private Set<Generator> propertiesGeneratorSet;
 
     public void setSourceGeneratorSet(Set<Generator> sourceGeneratorSet) {
         this.sourceGeneratorSet = sourceGeneratorSet;
@@ -27,9 +31,13 @@ public class GeneratorFactoryImpl {
         this.jobGeneratorSet = jobGeneratorSet;
     }
 
+    public void setPropertiesGeneratorSet(Set<Generator> propertiesGeneratorSet) {
+        this.propertiesGeneratorSet = propertiesGeneratorSet;
+    }
+
     public void flinkGeneratorStarter() {
         DefaultGeneratorStarter flinkGeneratorStarter = new DefaultGeneratorStarter();
-        flinkGeneratorStarter.start(sourceGeneratorSet, jobGeneratorSet);
+        flinkGeneratorStarter.start(sourceGeneratorSet, jobGeneratorSet, propertiesGeneratorSet);
     }
 
 }

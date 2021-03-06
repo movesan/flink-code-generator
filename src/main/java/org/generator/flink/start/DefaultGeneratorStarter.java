@@ -45,9 +45,9 @@ public class DefaultGeneratorStarter implements GeneratorStarter {
      * 执行生成方法
      */
     @Override
-    public void start(Set<Generator> sourceGeneratorSet, Set<Generator> jobGeneratorSet) {
+    public void start(Set<Generator> sourceGeneratorSet, Set<Generator> jobGeneratorSet, Set<Generator> propGeneratorSet) {
         try {
-            generator(sourceGeneratorSet, jobGeneratorSet);
+            generator(sourceGeneratorSet, jobGeneratorSet, propGeneratorSet);
         } catch (Exception e) {
             throw new RuntimeException("启动创建代码工具出现异常", e);
         }
@@ -56,11 +56,13 @@ public class DefaultGeneratorStarter implements GeneratorStarter {
     /**
      * 自动化创建代码文件
      */
-    protected void generator(Set<Generator> sourceGeneratorSet, Set<Generator> jobGeneratorSet) {
+    protected void generator(Set<Generator> sourceGeneratorSet, Set<Generator> jobGeneratorSet, Set<Generator> propGeneratorSet) {
         LOGGER.info("**********代码生成工具,开始自动生成代码**********");
 
         /** ++++++++++++++++++++++++++++++++ 自动化生成文件（一个job 只生成一份）++++++++++++++++++++++++++++++++ */
-        doGenerator(jobGeneratorSet, "waybill_model");
+        doGenerator(jobGeneratorSet, "job");
+        // 配置文件生成
+        doGeneratorProperties(propGeneratorSet);
 
         /** ++++++++++++++++++++++++++++++++ 自动化生成文件（每个数据源生成一份）++++++++++++++++++++++++++++++++ */
         List<String> tableNames = PropertiesUtils.getTableList(properties);
@@ -133,6 +135,64 @@ public class DefaultGeneratorStarter implements GeneratorStarter {
         LOGGER.info("**********代码生成工具,已经结束生成代码>>>{}", tableName);
     }
 
+    protected void doGeneratorProperties(Set<Generator> generatorSet) {
+        Map<String, String> allTypeAliasesMap = new TreeMap<>();
+        Set<PackageConfigTypes> packageConfigTypesHashSet = new HashSet<>();
+        for (Generator generator : generatorSet) {
+            packageConfigTypesHashSet.add(generator.getPackageConfigTypes());
+        }
+        Map<String, String> allPackageNameMap = GeneratorFileUtils.getAllPackageName(properties, packageConfigTypesHashSet);
+        for (Map.Entry<String, String> entry : allPackageNameMap.entrySet()) {
+            LOGGER.info("**********包名映射[键:{} , 值:{}]",
+                    entry.getKey(),
+                    entry.getValue());
+        }
+
+        Map<String, String> packageFileSuffixMap = GeneratorFileUtils.getAllPackageFileSuffix(packageConfigTypesHashSet);
+        for (Map.Entry<String, String> entry : packageFileSuffixMap.entrySet()) {
+            LOGGER.info("**********包名对应文件后缀映射[键:{} , 值:{}]", entry.getKey(), entry.getValue());
+        }
+        // 要生成的模块分层
+        String layerConfig = PropertiesUtils.getLayers(properties);
+        String[] layers = StringUtils.split(layerConfig, ",");
+        if (ArrayUtils.isEmpty(layers)) {
+            throw new RuntimeException(" 读取配置文件分层结构为空,请检查配置是否按照逗号隔开.");
+        }
+        Set<String> typeSet = new HashSet<>(Arrays.asList(layers));
+        LOGGER.info("**********代码生成工具,开始自动生成代码>>>{}", layerConfig);
+        Set<PackageConfigTypes> packageConfigTypesSet = new HashSet<>();
+        for (Generator generator : generatorSet) {
+            if (typeSet.contains(generator.getPackageConfigTypes().getType().key)) {
+                packageConfigTypesSet.add(generator.getPackageConfigTypes());
+            }
+        }
+
+        // 创建目录
+        GeneratorFileUtils.createPropertiesPackageDirectory(properties, packageConfigTypesSet);
+
+        for (Generator generator : generatorSet) {
+            PackageConfigTypes packageConfigTypes = generator.getPackageConfigTypes();
+            if (!packageConfigTypesSet.contains(packageConfigTypes)) {
+                continue;
+            }
+
+            try {
+                GeneratorContext generatorContext = initPropertiesBaseContext(allTypeAliasesMap);
+
+                for (Map.Entry<String, String> entry : packageFileSuffixMap.entrySet()) {
+                    generatorContext.addAttribute(entry.getKey(), entry.getValue());
+                }
+
+                doGeneratorService(generator, generatorContext, allPackageNameMap);
+            } catch (Exception e) {
+                LOGGER.error(String.format("Can not Generate tableName:%s,configTypes:%s",
+                        "",
+                        packageConfigTypes.getType()),
+                        e);
+            }
+        }
+    }
+
     /**
      * 调用创建模板的方式
      *
@@ -157,8 +217,12 @@ public class DefaultGeneratorStarter implements GeneratorStarter {
         List<String> tableNames = PropertiesUtils.getTableList(properties);
         String modelName = PropertiesUtils.getModelName(properties);
         String authorName = PropertiesUtils.getAuthorName(properties);
-        String upClassName = GeneratorStringUtils.firstUpperAndNoPrefix(tableName, properties);
-        String lowClassName = GeneratorStringUtils.formatAndNoPrefix(tableName, properties);
+        String upClassName = "";
+        String lowClassName = "";
+        if (StringUtils.isNotBlank(tableName)) {
+            upClassName = GeneratorStringUtils.firstUpperAndNoPrefix(tableName, properties);
+            lowClassName = GeneratorStringUtils.formatAndNoPrefix(tableName, properties);
+        }
         String packageName = PropertiesUtils.getPackage(properties);
 //        String primaryKeyType = propMap.get("primaryKeyType");
         String columnPrimaryKey = "primaryKey";
@@ -185,6 +249,36 @@ public class DefaultGeneratorStarter implements GeneratorStarter {
         generatorContext.addAttribute("tableNames", tableNames);
 //        generatorContext.addAttribute("mappers", allMappersMap);
 //        generatorContext.addAttribute("tableRemark", tableRemark);
+        return generatorContext;
+    }
+
+    protected GeneratorContext initPropertiesBaseContext(Map<String, String> allTypeAliasesMap) {
+        List<String> tableNames = PropertiesUtils.getTableList(properties);
+        String modelName = PropertiesUtils.getModelName(properties);
+        String authorName = PropertiesUtils.getAuthorName(properties);
+        String upClassName = "";
+        String lowClassName = "";
+
+        String packageName = PropertiesUtils.getPackage(properties);
+        String columnPrimaryKey = "primaryKey";
+        String primaryKeyType = "primaryKeyType";
+        String primaryKey = GeneratorStringUtils.firstUpperNoFormat(GeneratorStringUtils.format(columnPrimaryKey, properties));
+        String normalPrimaryKey = GeneratorStringUtils.format(columnPrimaryKey, properties);
+
+        GeneratorContext generatorContext = new GeneratorContext(authorName,
+                "",
+                upClassName,
+                lowClassName,
+                packageName,
+                primaryKeyType,
+                primaryKey,
+                modelName,
+                properties);
+        generatorContext.addAttribute("properties", properties);
+        generatorContext.addAttribute("columnPrimaryKey", columnPrimaryKey);
+        generatorContext.addAttribute("normalPrimaryKey", normalPrimaryKey);
+        generatorContext.addAttribute("typeAliases", allTypeAliasesMap);
+        generatorContext.addAttribute("tableNames", tableNames);
         return generatorContext;
     }
 }

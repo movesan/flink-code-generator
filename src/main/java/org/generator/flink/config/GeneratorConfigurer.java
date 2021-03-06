@@ -58,6 +58,11 @@ public interface GeneratorConfigurer {
     String JAVA_SRC = "java";
 
     /**
+     * 配置文件生成的所在包文件
+     */
+    String PROPERTIES_SRC = "resources";
+
+    /**
      * 获取配置文件配置集
      *
      * @return 配置文件配置集

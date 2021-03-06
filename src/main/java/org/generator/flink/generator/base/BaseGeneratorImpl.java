@@ -2,6 +2,7 @@ package org.generator.flink.generator.base;
 
 import org.generator.flink.config.PackageConfigType;
 import org.generator.flink.config.PackageConfigTypes;
+import org.generator.flink.domain.FieldBean;
 import org.generator.flink.generator.Generator;
 import org.generator.flink.generator.context.GeneratorContext;
 import org.generator.flink.utils.FileUtil;
@@ -25,6 +26,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -252,18 +254,33 @@ public class BaseGeneratorImpl implements Generator {
         String tableName = context.getTableName();
 
         Map<String, String> generatorParams = Maps.newHashMap();
-        for (PackageConfigType packageConfigType : packageConfigTypeSet) {
-            String targetDir = packageConfigType.getTargetDir();
-            String fileNameSuffix = packageConfigType.getFileNameSuffix();
-            String template = packageConfigType.getTemplate();
+        if (StringUtils.isNotBlank(tableName)) {
+            for (PackageConfigType packageConfigType : packageConfigTypeSet) {
+                String targetDir = packageConfigType.getTargetDir();
+                String fileNameSuffix = packageConfigType.getFileNameSuffix();
+                String template = packageConfigType.getTemplate();
 
-            String fileName;
-            context.getPackageNamesMap().putAll(allPackageNameMap);
+                String fileName;
+                context.getPackageNamesMap().putAll(allPackageNameMap);
 
-            fileName = GeneratorFileUtils.getPackageDirectory(targetDir, properties)
-                    + GeneratorStringUtils.firstUpperAndNoPrefix(tableName, properties)
-                    + fileNameSuffix;
-            generatorParams.put(template, fileName);
+                fileName = GeneratorFileUtils.getPackageDirectory(targetDir, properties)
+                        + GeneratorStringUtils.firstUpperAndNoPrefix(tableName, properties)
+                        + fileNameSuffix;
+                generatorParams.put(template, fileName);
+            }
+        } else {
+            for (PackageConfigType packageConfigType : packageConfigTypeSet) {
+                String targetDir = packageConfigType.getTargetDir();
+                String fileNameSuffix = packageConfigType.getFileNameSuffix();
+                String template = packageConfigType.getTemplate();
+
+                String fileName;
+                context.getPackageNamesMap().putAll(allPackageNameMap);
+
+                fileName = GeneratorFileUtils.getPropertiesPackageDirectory(targetDir, properties)
+                        + fileNameSuffix;
+                generatorParams.put(template, fileName);
+            }
         }
         return generatorParams;
     }
@@ -291,6 +308,23 @@ public class BaseGeneratorImpl implements Generator {
         } catch (IOException e) {
             throw new RuntimeException("read velocity templates error, e", e);
         }
+    }
+
+    protected String generateLowTableName(String tableName, Properties properties) {
+        return GeneratorStringUtils.formatAndNoPrefix(tableName, properties);
+    }
+
+    protected String generateUpTableName(String tableName, Properties properties) {
+        return GeneratorStringUtils.firstUpperAndNoPrefix(tableName, properties);
+    }
+
+    protected List<String> generateSourceParas(List<String> tableNames, Properties properties) {
+        List<String> fields = Lists.newArrayList();
+        for (String tableName : tableNames) {
+            String lowName = GeneratorStringUtils.formatAndNoPrefix(tableName, properties);
+            fields.add(lowName);
+        }
+        return fields;
     }
 
     protected List<String> generateKeyWords(List<String> tableNames, Properties properties) {
@@ -326,38 +360,48 @@ public class BaseGeneratorImpl implements Generator {
         return fields;
     }
 
-    protected List<String> generateSourceFields(Set<String> keySet) {
-        List<String> fields = Lists.newArrayList();
-        for (String key : keySet) {
-            StringBuilder sb = new StringBuilder();
-            String upperField = key.toUpperCase();
-            sb.append("public static final String SOURCE_FIELD_")
-                    .append(upperField).append(" = ")
-                    .append("\"")
-                    .append(key)
-                    .append("\"")
-                    .append(";");
-//                    .append(LINE);
-            fields.add(sb.toString());
+    protected Map<String, List<FieldBean>> generateSourceFields(Map<String, List<FieldBean>> fieldMap) {
+        for (Map.Entry<String, List<FieldBean>> entry : fieldMap.entrySet()) {
+            List<FieldBean> fieldBeanSet = entry.getValue();
+            for (FieldBean fieldBean : fieldBeanSet) {
+                String field = fieldBean.getField();
+                StringBuilder sb = new StringBuilder();
+                String upperField = field.toUpperCase();
+                sb.append("public static final String SOURCE_FIELD_")
+                        .append(upperField).append(" = ")
+                        .append("\"")
+                        .append(field)
+                        .append("\"")
+                        .append(";");
+                fieldBean.setFieldSource(sb.toString());
+            }
         }
-        return fields;
+
+        return fieldMap;
     }
 
-    protected List<String> generateSourceFieldsParam(Set<String> keySet) {
-        List<String> fields = Lists.newArrayList();
-        int i = keySet.size();
-        for (String key : keySet) {
-            i--;
-            StringBuilder sb = new StringBuilder();
-            String upperField = key.toUpperCase();
-            sb.append("SOURCE_FIELD_")
-                    .append(upperField);
-            if (i > 0) {
-                sb.append(",");
+    protected Map<String, List<String>> generateSourceFieldsParam(Map<String, List<FieldBean>> fieldMap) {
+        Map<String, List<String>> map = new HashMap<>();
+        for (Map.Entry<String, List<FieldBean>> entry : fieldMap.entrySet()) {
+            List<String> fields = Lists.newArrayList();
+            String key = entry.getKey();
+            List<FieldBean> fieldBeanSet = entry.getValue();
+            int i = fieldBeanSet.size();
+            for (FieldBean fieldBean : fieldBeanSet) {
+                i--;
+                String field = fieldBean.getField();
+                StringBuilder sb = new StringBuilder();
+                String upperField = field.toUpperCase();
+                sb.append("SOURCE_FIELD_")
+                        .append(upperField);
+                if (i > 0) {
+                    sb.append(",");
+                }
+                fields.add(sb.toString());
             }
-            fields.add(sb.toString());
+            map.put(key, fields);
         }
-        return fields;
+        return map;
     }
 
 

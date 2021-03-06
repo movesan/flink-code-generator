@@ -10,6 +10,26 @@ public class GeneratorStringUtils {
 
     }
 
+    public static String format(String string) {
+        if (!StringUtils.contains(string, "_")) {
+            return string != null ? string.toLowerCase() : null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        char[] cArr = string.trim().toLowerCase().toCharArray();
+        for (int i = 0; i < cArr.length; i++) {
+            char c = cArr[i];
+            if (c == '_') {
+                i++;
+                sb.append(Character.toUpperCase(cArr[i]));
+            } else {
+                sb.append(c);
+            }
+        }
+
+        return sb.toString();
+    }
+
     /**
      * format database type into java type, eg format "card_type" into "cardType"
      *

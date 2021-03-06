@@ -1,0 +1,100 @@
+package ${configPackage};
+
+import org.apache.flink.api.java.utils.ParameterTool;
+import org.generator.flink.common.JobConstant;
+
+import lombok.Getter;
+import lombok.Setter;
+import java.io.Serializable;
+
+${classTitle}
+@Getter
+@Setter
+public class ${upClassName}Config extends com.jd.wl.rtdw.common.config.JobConfig implements Serializable {
+
+    public static final String JOB_CONFIG = "job.properties";
+
+#foreach($sourcePara in $sourceParaMap.entrySet())
+    private static final String ${sourcePara.value}_PARA = JobConstant.ConfigKeyWords.${sourcePara.value}_SOURCE + ".source.parallel";
+#end
+
+    // union parallelism TODO
+
+    private static final String KAFKA_SINK_PARA = "kafka.sink.parallel";
+
+    private static final String SO_START_BY_TIME = "so.jdq.start.time";
+    private static final String SO_START_BY_TIME_SECONDES = "so.jdq.start.time.seconds";
+
+    private boolean jdqStartByTime = false;    //从昨天开始，为了测试方便
+    private long jdqStartTimeSeconds = 86400 * 3;
+    private boolean mock = false;
+
+    // jdq source topic default parallelism
+#foreach($sourcePara in $sourceParaMap.entrySet())
+    private int ${sourcePara.key} = 20;
+#end
+
+    // union parallelism TODO
+
+    // jdq sink topic parallelism
+    private int kafkaSinkPara = 20;
+
+    public static JobConfig fromParameters(ParameterTool parameterTool) {
+
+        JobConfig jobConfig = new JobConfig();
+
+        if (parameterTool.has("mock")) {
+            jobConfig.mock = true;
+            jobConfig.esDefaultBulkSize = 5;
+//            salesOutboundConfig.defaultRedisPipeSize = 10;
+        }
+
+        if (parameterTool.has(ES_HOSTS_URL)) {
+            jobConfig.esHosts = parameterTool.get(ES_HOSTS_URL);
+        }
+
+        if (parameterTool.has(ES_USER_NAME)) {
+
+            jobConfig.esUsername = parameterTool.get(ES_USER_NAME);
+        }
+
+        if (parameterTool.has(ES_PASSWORD)) {
+            jobConfig.esPassword = parameterTool.get(ES_PASSWORD);
+        }
+
+        if (parameterTool.has(SO_START_BY_TIME)) {
+            jobConfig.jdqStartByTime = parameterTool.getBoolean(SO_START_BY_TIME);
+        }
+
+        if (parameterTool.has(SO_START_BY_TIME_SECONDES)) {
+            jobConfig.jdqStartTimeSeconds = parameterTool.getInt(SO_START_BY_TIME_SECONDES);
+        }
+
+        // source parallelism
+    #foreach($sourcePara in $sourceParaMap.entrySet())
+    if (parameterTool.has(${sourcePara.value}_PARA)) {
+            jobConfig.${sourcePara.key} = parameterTool.getInt(${sourcePara.value}_PARA);
+        }
+    #end
+
+        // union TODO
+
+        // sink parallelism
+        if (parameterTool.has(KAFKA_SINK_PARA)) {
+            jobConfig.kafkaSinkPara = parameterTool.getInt(KAFKA_SINK_PARA);
+        }
+
+        return jobConfig;
+    }
+
+    @Override
+    public boolean isJdqStartByTime() {
+        return this.jdqStartByTime;
+    }
+
+    @Override
+    public long getJdqStartTimeSeconds() {
+        return this.jdqStartTimeSeconds;
+    }
+
+}

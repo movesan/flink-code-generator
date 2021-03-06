@@ -1,0 +1,5 @@
+######String username, String password, String brokerList, String clientId, String group, String topic
+## source
+#foreach($source in $sources)
+${source}.jdqinfo=
+#end

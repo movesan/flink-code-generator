@@ -42,6 +42,7 @@ public class DefaultGeneratorConfigurer implements GeneratorConfigurer {
         initLayers();
         initLocation();
         initJavaSrc();
+        initPropertiesSrc();
         initAnnotation();
     }
 
@@ -108,6 +109,14 @@ public class DefaultGeneratorConfigurer implements GeneratorConfigurer {
             return;
         }
         properties.setProperty("java.src", JAVA_SRC);
+    }
+
+    protected void initPropertiesSrc() {
+        String value = (String) properties.get("properties.src");
+        if (StringUtils.isNotBlank(value)) {
+            return;
+        }
+        properties.setProperty("properties.src", PROPERTIES_SRC);
     }
 
     protected void loadProperties() {

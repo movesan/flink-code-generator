@@ -60,6 +60,27 @@ public class GeneratorFileUtils {
         }
     }
 
+    public static void createPropertiesPackageDirectory(Properties properties, Set<PackageConfigTypes> packageConfigTypesSet) {
+
+        // src/test/java
+        String location = PropertiesUtils.getLocation(properties);
+        // test
+        String project = PropertiesUtils.getProject(properties);
+        if (StringUtils.isNoneBlank(project)) {
+            location = location + "/" + properties.get("properties.src");
+        }
+        // /org/generator/flink
+//        String packageDir = "/" + PropertiesUtils.getPackage(properties).replaceAll("[.]", "/");
+        if (StringUtils.isNoneBlank(project)) {
+            for (PackageConfigTypes packageConfigTypes : packageConfigTypesSet) {
+                for (PackageConfigType packageConfigType : packageConfigTypes.getPackageConfigTypeSet()) {
+                    String targetDir = packageConfigType.getTargetDir();
+                    mkDir(location + targetDir);
+                }
+            }
+        }
+    }
+
     private static void mkDir(String dir) {
         File file;
         file = new File(dir);
@@ -77,6 +98,18 @@ public class GeneratorFileUtils {
             directory = location + "/" + properties.get("java.src") + packageDir + "/" + name + "/";
         } else {
             directory = location + packageDir + "/" + name + "/";
+        }
+        return directory;
+    }
+
+    public static String getPropertiesPackageDirectory(String name, Properties properties) {
+        String location = PropertiesUtils.getLocation(properties);
+        String project = PropertiesUtils.getProject(properties);
+        String directory;
+        if (StringUtils.isNotBlank(project)) {
+            directory = location + "/" + properties.get("properties.src") + "/" + name + "/";
+        } else {
+            directory = location + "/" + name + "/";
         }
         return directory;
     }

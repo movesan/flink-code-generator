@@ -18,7 +18,8 @@ public class ConstantGeneratorImpl extends BaseGeneratorImpl {
     public void initVelocityContext(VelocityContext velocityContext, GeneratorContext generatorContext) {
         super.initVelocityContext(velocityContext, generatorContext);
 
-        velocityContext.put("fields", generateSourceFields(FieldsConfig.getFields()));
-        velocityContext.put("fieldsParam", generateSourceFieldsParam(FieldsConfig.getFields()));
+//        velocityContext.put("fields", generateSourceFields(FieldsConfig.getFields()));
+        velocityContext.put("fieldsParamMap", generateSourceFieldsParam(FieldsConfig.getFieldsMap()));
+        velocityContext.put("fieldsMap", generateSourceFields(FieldsConfig.getFieldsMap()));
     }
 }

@@ -1,15 +1,16 @@
 package ${jobConstantPackage};
 
 ${classTitle}
-public class ${upClassName}Constant {
+public class ${upClassName}Constant{
 
     public static final String MODEL_NAME = "${modelName}";
 
     public static class ConfigKeyWords {
 
-    #foreach($keyWord in $keyWords)
-        ${keyWord}
-    #end
+#foreach($keyWord in $keyWords)
+    ${keyWord}
+#end
+
     }
 
     public static class SinkKeyWords {
@@ -19,9 +20,10 @@ public class ${upClassName}Constant {
 
     public static class SourceTableName {
 
-    #foreach($tableName in $tableNames)
-        ${tableName}
-    #end
+#foreach($tableName in $tableNames)
+    ${tableName}
+#end
+
     }
 
 }

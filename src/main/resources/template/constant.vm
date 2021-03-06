@@ -6,14 +6,18 @@ import java.util.List;
 ${classTitle}
 public class ${upClassName}Constant {
 
-#foreach($field in $fields)
-    ${field}
+#foreach($fieldBean in $fieldsMap.get($tableName))
+    #**
+        ${fieldBean.fieldName}
+    *#
+    ${fieldBean.fieldSource}
 #end
 
     public final static List<String> PARAM_LIST = Arrays.asList(
-    #foreach($fieldParam in $fieldsParam)
-        ${fieldParam}
+    #foreach($fieldParam in $fieldsParamMap.get($tableName))
+    ${fieldParam}
     #end
+
     );
 
     public final static List<String> BASIC_LIST = Arrays.asList(

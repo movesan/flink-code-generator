@@ -13,5 +13,5 @@ public interface GeneratorStarter {
     /**
      * 启动创建代码
      */
-    void start(Set<Generator> sourceGeneratorSet, Set<Generator> jobGeneratorSet);
+    void start(Set<Generator> sourceGeneratorSet, Set<Generator> jobGeneratorSet, Set<Generator> propGeneratorSet);
 }

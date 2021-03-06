@@ -1,0 +1,4 @@
+# source parallelism
+#foreach($source in $sources)
+${source}.source.parallel=12
+#end
