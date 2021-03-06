@@ -1,9 +1,10 @@
-package ${jobPackage};
+package ${jobTestPackage};
 
 import com.jd.bdp.jdw.avro.JdwData;
 import com.jd.wl.rtdw.common.map.JdqParamCaseReMap;
 import com.jd.wl.rtdw.common.mq.AnotherJdwDataDeserSchema;
 import com.jd.wl.rtdw.common.mq.JDQKafkaFactory;
+import com.jd.wl.rtdw.common.util.DataUtils;
 import org.generator.flink.common.JobConstant;
 import org.generator.flink.config.JobConfig;
 #foreach($sourceConstant in $sourceConstants)
@@ -27,13 +28,13 @@ import java.io.InputStream;
 import static com.jd.wl.rtdw.common.Constants.BDP_LOGGER;
 
 ${classTitle}
-public class ${upClassName} {
+public class ${upClassName}Test {
 
     private static final Logger logger = LoggerFactory.getLogger(BDP_LOGGER);
 
     public static void main(String[] args) throws Exception {
         ParameterTool parameterA = ParameterTool.fromArgs(args);
-        InputStream file = Job.class.getResourceAsStream("/" + JobConfig.JOB_CONFIG);
+        InputStream file = JobTest.class.getResourceAsStream("/" + JobConfig.JOB_CONFIG);
         ParameterTool parameterFile = ParameterTool.fromPropertiesFile(file);
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -53,9 +54,8 @@ public class ${upClassName} {
         config.setMaxConcurrentCheckpoints(1);
 
     #foreach($sourceConstant in $sourceConstants)
-    // source: ${sourceConstant.lowCamelCase}
-        SingleOutputStreamOperator<JdwData> ${sourceConstant.lowCamelCase}SourceStream = JDQKafkaFactory
-                .addSource(env, JobConstant.ConfigKeyWords.${sourceConstant.upperSnakeCase}_SOURCE, new AnotherJdwDataDeserSchema(), jobConfig, jobConfig.get${sourceConstant.upperCamelCase}Para())
+    //  source: ${sourceConstant.lowCamelCase}
+        SingleOutputStreamOperator<JdwData> ${sourceConstant.lowCamelCase}SourceStream = DataUtils.getRatedSource(env, new ${sourceConstant.upperCamelCase}Mock(), 1)
                 .map(new JdqParamCaseReMap(JdqParamCaseReMap.ParamCase.LOWER_CASE)).name("${sourceConstant.upperCamelCase}ParamCaseMap").uid("${sourceConstant.upperCamelCase}ParamCaseMap").setParallelism(jobConfig.get${sourceConstant.upperCamelCase}Para())
                 .filter(new ${sourceConstant.upperCamelCase}ParamFilter()).name("${sourceConstant.upperCamelCase}ParamFilter").uid("${sourceConstant.upperCamelCase}ParamFilter").setParallelism(jobConfig.get${sourceConstant.upperCamelCase}Para())
                 .map(new ${sourceConstant.upperCamelCase}ParamMap()).name("${sourceConstant.upperCamelCase}ParamMap").uid("${sourceConstant.upperCamelCase}ParamMap").setParallelism(jobConfig.get${sourceConstant.upperCamelCase}Para());

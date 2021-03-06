@@ -1,0 +1,35 @@
+package ${sinkSelectorPackage};
+
+import com.jd.bdp.jdw.avro.JdwData;
+import com.jd.bdp.jdw.avro.JdwDataUtils;
+import com.jd.wl.rtdw.common.mq.AbstractJdwDataKeyedSerializationSchemaWrapper;
+import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+import static com.jd.wl.rtdw.common.Constants.BDP_LOGGER;
+
+${classTitle}
+public class KafkaSinkJdwDataSchemaWrapper extends AbstractJdwDataKeyedSerializationSchemaWrapper {
+
+    public static final Logger logger = LoggerFactory.getLogger(BDP_LOGGER);
+
+    @Override
+    protected String getKey(JdwData element) {
+        if (element == null) {
+            return null;
+        }
+        Map<CharSequence, CharSequence> src = element.getSrc();
+        if (MapUtils.isEmpty(src)) {
+            return null;
+        }
+        Map<String, String> transform = JdwDataUtils.transform(src);
+        // TODO
+        if (false) {
+            return null;
+        }
+        return null;
+    }
+}

@@ -223,17 +223,19 @@ public class BaseGeneratorImpl implements Generator {
         }
 
         StringBuilder titleSb = new StringBuilder();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy MM-dd HH:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String authorName = StringUtils.isBlank(generatorContext.getAuthorName()) ? System.getProperty("user.name")
                 : generatorContext.getAuthorName();
 
         titleSb.append("/** ")
                 .append(LINE)
+                .append(" * @description ")
+                .append(LINE)
                 .append(String.format(" * @author %s", authorName))
                 .append(LINE)
                 .append(String.format(" * @version %s", "V1.0"))
                 .append(LINE)
-                .append(String.format(" * @date %s.", dateFormat.format(new Date())))
+                .append(String.format(" * @create %s.", dateFormat.format(new Date())))
                 .append(LINE)
                 .append(" */");
         velocityContext.put("classTitle", titleSb.toString());
@@ -254,7 +256,20 @@ public class BaseGeneratorImpl implements Generator {
         String tableName = context.getTableName();
 
         Map<String, String> generatorParams = Maps.newHashMap();
-        if (StringUtils.isNotBlank(tableName)) {
+        if ("job".equals(tableName)) {
+            for (PackageConfigType packageConfigType : packageConfigTypeSet) {
+                String targetDir = packageConfigType.getTargetDir();
+                String fileNameSuffix = packageConfigType.getFileNameSuffix();
+                String template = packageConfigType.getTemplate();
+
+                String fileName;
+                context.getPackageNamesMap().putAll(allPackageNameMap);
+
+                fileName = GeneratorFileUtils.getPackageDirectory(targetDir, properties)
+                        + fileNameSuffix;
+                generatorParams.put(template, fileName);
+            }
+        } else if (StringUtils.isNotBlank(tableName)) {
             for (PackageConfigType packageConfigType : packageConfigTypeSet) {
                 String targetDir = packageConfigType.getTargetDir();
                 String fileNameSuffix = packageConfigType.getFileNameSuffix();

@@ -10,7 +10,7 @@ import java.io.Serializable;
 ${classTitle}
 @Getter
 @Setter
-public class ${upClassName}Config extends com.jd.wl.rtdw.common.config.JobConfig implements Serializable {
+public class JobConfig extends com.jd.wl.rtdw.common.config.JobConfig implements Serializable {
 
     public static final String JOB_CONFIG = "job.properties";
 

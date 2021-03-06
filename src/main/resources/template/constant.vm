@@ -7,9 +7,9 @@ ${classTitle}
 public class ${upClassName}Constant {
 
 #foreach($fieldBean in $fieldsMap.get($tableName))
-    #**
-        ${fieldBean.fieldName}
-    *#
+    /**
+     *  ${fieldBean.fieldName}
+     */
     ${fieldBean.fieldSource}
 #end
 

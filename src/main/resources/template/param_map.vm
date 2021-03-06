@@ -1,4 +1,4 @@
-package ${mapPackage};
+package ${paramMapPackage};
 
 import com.jd.wl.rtdw.common.map.JdqCurParamReMap;
 import ${constantPackage}.${upClassName}Constant;

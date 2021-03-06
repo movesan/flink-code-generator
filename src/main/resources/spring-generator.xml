@@ -101,6 +101,20 @@
         </constructor-arg>
     </bean>
 
+    <bean id="mockPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
+        <constructor-arg name="type" value="SOURCE"/>
+        <constructor-arg name="packageConfigTypeSet">
+            <set>
+                <bean class="org.generator.flink.config.PackageConfigType">
+                    <property name="aliasType" value="mockPackage"/>
+                    <property name="targetDir" value="/job/test"/>
+                    <property name="fileNameSuffix" value="Mock.java"/>
+                    <property name="template" value="mock.vm"/>
+                </bean>
+            </set>
+        </constructor-arg>
+    </bean>
+
     <bean id="sinkSelectorPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
         <constructor-arg name="type" value="SOURCE"/>
         <constructor-arg name="packageConfigTypeSet">
@@ -108,8 +122,8 @@
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="sinkSelectorPackage"/>
                     <property name="targetDir" value="/sink"/>
-                    <property name="fileNameSuffix" value="Selector.java"/>
-                    <property name="template" value="sink_selector.vm"/>
+                    <property name="fileNameSuffix" value="KafkaSinkJdwDataSchemaWrapper.java"/>
+                    <property name="template" value="schema_wrapper.vm"/>
                 </bean>
             </set>
         </constructor-arg>
@@ -122,7 +136,7 @@
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="configPackage"/>
                     <property name="targetDir" value="/config"/>
-                    <property name="fileNameSuffix" value="Config.java"/>
+                    <property name="fileNameSuffix" value="JobConfig.java"/>
                     <property name="template" value="job_config.vm"/>
                 </bean>
             </set>
@@ -136,8 +150,22 @@
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="jobPackage"/>
                     <property name="targetDir" value="/job"/>
-                    <property name="fileNameSuffix" value=".java"/>
+                    <property name="fileNameSuffix" value="Job.java"/>
                     <property name="template" value="job.vm"/>
+                </bean>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <bean id="jobTestPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
+        <constructor-arg name="type" value="SOURCE"/>
+        <constructor-arg name="packageConfigTypeSet">
+            <set>
+                <bean class="org.generator.flink.config.PackageConfigType">
+                    <property name="aliasType" value="jobTestPackage"/>
+                    <property name="targetDir" value="/job/test"/>
+                    <property name="fileNameSuffix" value="JobTest.java"/>
+                    <property name="template" value="job_test.vm"/>
                 </bean>
             </set>
         </constructor-arg>
@@ -150,7 +178,7 @@
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="jobConstantPackage"/>
                     <property name="targetDir" value="/common"/>
-                    <property name="fileNameSuffix" value="Constant.java"/>
+                    <property name="fileNameSuffix" value="JobConstant.java"/>
                     <property name="template" value="job_constant.vm"/>
                 </bean>
             </set>
@@ -168,10 +196,10 @@
                     <property name="template" value="jdq3_properties.vm"/>
                 </bean>
                 <bean class="org.generator.flink.config.PackageConfigType">
-                    <property name="aliasType" value="jdq3PropertiesPackage"/>
-                    <property name="targetDir" value="/prod"/>
-                    <property name="fileNameSuffix" value="jdq3.properties"/>
-                    <property name="template" value="jdq3_properties.vm"/>
+                    <property name="aliasType" value="jobPropertiesPackage"/>
+                    <property name="targetDir" value="/bak"/>
+                    <property name="fileNameSuffix" value="job.properties"/>
+                    <property name="template" value="job_properties.vm"/>
                 </bean>
             </set>
         </constructor-arg>
@@ -182,10 +210,10 @@
         <constructor-arg name="packageConfigTypeSet">
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
-                    <property name="aliasType" value="jobPropertiesPackage"/>
-                    <property name="targetDir" value="/bak"/>
-                    <property name="fileNameSuffix" value="job.properties"/>
-                    <property name="template" value="job_properties.vm"/>
+                    <property name="aliasType" value="jdq3PropertiesPackage"/>
+                    <property name="targetDir" value="/prod"/>
+                    <property name="fileNameSuffix" value="jdq3.properties"/>
+                    <property name="template" value="jdq3_properties.vm"/>
                 </bean>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="jobPropertiesPackage"/>
@@ -218,11 +246,17 @@
     <bean id="selectorGenerator" class="org.generator.flink.generator.impl.SelectorGeneratorImpl">
         <property name="packageConfigTypes" ref="selectorPackageConfigTypes"/>
     </bean>
-    <bean id="sinkSelectorGenerator" class="org.generator.flink.generator.impl.SelectorGeneratorImpl">
+    <bean id="mockGenerator" class="org.generator.flink.generator.impl.ConstantGeneratorImpl">
+        <property name="packageConfigTypes" ref="mockPackageConfigTypes"/>
+    </bean>
+    <bean id="sinkSelectorGenerator" class="org.generator.flink.generator.impl.ConstantGeneratorImpl">
         <property name="packageConfigTypes" ref="sinkSelectorPackageConfigTypes"/>
     </bean>
     <bean id="jobConfigGenerator" class="org.generator.flink.generator.impl.ConfigGeneratorImpl">
         <property name="packageConfigTypes" ref="jobConfigPackageConfigTypes"/>
+    </bean>
+    <bean id="jobTestGenerator" class="org.generator.flink.generator.impl.JobGeneratorImpl">
+        <property name="packageConfigTypes" ref="jobTestPackageConfigTypes"/>
     </bean>
     <bean id="jobGenerator" class="org.generator.flink.generator.impl.JobGeneratorImpl">
         <property name="packageConfigTypes" ref="jobPackageConfigTypes"/>
@@ -242,18 +276,20 @@
         <property name="sourceGeneratorSet">
             <set>
                 <bean parent="constantGenerator"/>
-                <bean parent="filterGenerator"/>
+<!--                <bean parent="filterGenerator"/>-->
                 <bean parent="paramFilterGenerator"/>
-                <bean parent="mapGenerator"/>
                 <bean parent="paramMapGenerator"/>
-                <bean parent="richFlatMapGenerator"/>
-                <bean parent="selectorGenerator"/>
+                <bean parent="mockGenerator"/>
+<!--                <bean parent="mapGenerator"/>-->
+<!--                <bean parent="richFlatMapGenerator"/>-->
+<!--                <bean parent="selectorGenerator"/>-->
             </set>
         </property>
         <!-- 一个Job 只生成一份 -->
         <property name="jobGeneratorSet">
             <set>
                 <bean parent="jobGenerator"/>
+                <bean parent="jobTestGenerator"/>
                 <bean parent="jobConstantGenerator"/>
                 <bean parent="jobConfigGenerator"/>
                 <bean parent="sinkSelectorGenerator"/>
