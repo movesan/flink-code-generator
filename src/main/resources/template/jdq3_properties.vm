@@ -3,3 +3,5 @@
 #foreach($source in $sources)
 ${source}.jdqinfo=
 #end
+
+cdmSink.jdqinfo=

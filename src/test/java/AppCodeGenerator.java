@@ -6,7 +6,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class AppTest {
+public class AppCodeGenerator {
 
     private static ApplicationContext context;
 

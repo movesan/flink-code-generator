@@ -15,15 +15,6 @@ waybill_oth_pick_task:
     amount: 货物件数
 
 waybill_oth_pick_ope:
-    pickup_task_id: 取件信息表ID
-    customer_name: 用户名称
-    customer_address: 用户地址
-    telphone: 用户电话
-    g_weight: 重量
-    invoice_id: 发票号
-    g_volume: 体积
-    site_id: 站点ID
-    new_waybill_code: 取件换新单号
     pickup_code: 取件单号
     product_code: 商品编号
     product_name: 商品名称

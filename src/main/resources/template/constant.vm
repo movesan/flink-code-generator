@@ -21,6 +21,7 @@ public class ${upClassName}Constant {
     );
 
     public final static List<String> BASIC_LIST = Arrays.asList(
+        // TODO 基础字段
     );
 
 }
