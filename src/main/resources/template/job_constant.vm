@@ -7,9 +7,9 @@ public class ${upClassName}Constant{
 
     public static class ConfigKeyWords {
 
-#foreach($keyWord in $keyWords)
+    #foreach($keyWord in $keyWords)
     ${keyWord}
-#end
+    #end
 
     }
 
@@ -20,9 +20,9 @@ public class ${upClassName}Constant{
 
     public static class SourceTableName {
 
-#foreach($tableName in $tableNames)
+    #foreach($tableName in $tableNames)
     ${tableName}
-#end
+    #end
 
     }
 
