@@ -4,8 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="constantPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="constantPackage"/>
@@ -18,8 +18,8 @@
     </bean>
 
     <bean id="paramFilterPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="paramFilterPackage"/>
@@ -32,8 +32,8 @@
     </bean>
 
     <bean id="filterPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="filterPackage"/>
@@ -46,8 +46,8 @@
     </bean>
 
     <bean id="paramMapPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="paramMapPackage"/>
@@ -60,8 +60,8 @@
     </bean>
 
     <bean id="mapPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="mapPackage"/>
@@ -74,8 +74,8 @@
     </bean>
 
     <bean id="richFlatMapPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="richFlatMapPackage"/>
@@ -88,8 +88,8 @@
     </bean>
 
     <bean id="selectorPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="selectorPackage"/>
@@ -102,8 +102,8 @@
     </bean>
 
     <bean id="mockPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="mockPackage"/>
@@ -116,8 +116,8 @@
     </bean>
 
     <bean id="sinkSelectorPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="sinkSelectorPackage"/>
@@ -130,8 +130,8 @@
     </bean>
 
     <bean id="jobConfigPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="configPackage"/>
@@ -144,8 +144,8 @@
     </bean>
 
     <bean id="jobPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="jobPackage"/>
@@ -158,8 +158,8 @@
     </bean>
 
     <bean id="jobTestPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="jobTestPackage"/>
@@ -172,8 +172,8 @@
     </bean>
 
     <bean id="jobConstantPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="jobConstantPackage"/>
@@ -186,8 +186,8 @@
     </bean>
 
     <bean id="jdq3PropertiesPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="jdq3PropertiesPackage"/>
@@ -206,8 +206,8 @@
     </bean>
 
     <bean id="jobPropertiesPackageConfigTypes" class="org.generator.flink.config.PackageConfigTypes">
-        <constructor-arg name="type" value="SOURCE"/>
-        <constructor-arg name="packageConfigTypeSet">
+        <constructor-arg  value="SOURCE"/>
+        <constructor-arg >
             <set>
                 <bean class="org.generator.flink.config.PackageConfigType">
                     <property name="aliasType" value="jdq3PropertiesPackage"/>
